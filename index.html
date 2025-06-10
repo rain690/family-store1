@@ -1,0 +1,58 @@
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Family Store</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <div class="container" style="display: flex; align-items: center; justify-content: flex-start; gap: 30px;">
+            <h1 style="margin: 0;">Family Store</h1>
+            <nav>
+                <a href="index.html">Главная</a>
+                <a href="catalog.html">Каталог</a>
+                <a href="contacts.html">Контакты</a>
+            </nav>
+        </div>
+    </header>
+    <main class="container" style="text-align: center;">
+        <h2 style="color: white; font-size: 36px; text-shadow: 1px 1px 2px black;">Добро пожаловать в Family Store</h2>
+        <p style="color: white; font-size: 24px; text-shadow: 1px 1px 2px black;">Ваш интернет-магазин одежды.</p>
+
+        <form style="margin-top: 30px; max-width: 300px; margin-left: auto; margin-right: auto;">
+            <div style="margin-bottom: 15px;">
+                <label for="login" style="display: block; color: white; font-size: 20px; margin-bottom: 5px;">Логин</label>
+                <input type="text" id="login" name="login" style="width: 100%; padding: 10px; font-size: 18px; border-radius: 5px; border: none;">
+            </div>
+            <div style="margin-bottom: 15px;">
+                <label for="password" style="display: block; color: white; font-size: 20px; margin-bottom: 5px;">Пароль</label>
+                <input type="password" id="password" name="password" style="width: 100%; padding: 10px; font-size: 18px; border-radius: 5px; border: none;">
+            </div>
+            <button type="submit" style="padding: 10px 20px; font-size: 18px; border: none; border-radius: 5px; background-color: white; color: black; cursor: pointer;">Зарегистрироваться</button>
+        </form>
+    </main>
+
+    <script>
+      document.querySelector("form").addEventListener("submit", function(e) {
+        const login = document.getElementById("login").value.trim();
+        const password = document.getElementById("password").value.trim();
+
+        if (login.length < 3) {
+          alert("Логин должен быть не менее 3 символов.");
+          e.preventDefault();
+          return;
+        }
+
+        if (password.length < 6) {
+          alert("Пароль должен быть не менее 6 символов.");
+          e.preventDefault();
+          return;
+        }
+
+        alert("Регистрация прошла успешно!");
+      });
+    </script>
+</body>
+</html>
