@@ -22,23 +22,20 @@
       max-width: 100%;
       border-radius: 8px;
     }
-    .admin-panel,
-    .admin-login {
+    .admin-panel, .admin-login {
       background-color: rgba(255, 255, 255, 0.9);
       padding: 15px;
       margin: 20px auto;
       max-width: 500px;
       border-radius: 10px;
     }
-    .admin-panel input,
-    .admin-login input {
+    .admin-panel input, .admin-login input, select {
       padding: 10px;
       margin-bottom: 10px;
       width: 100%;
       font-size: 16px;
     }
-    .admin-panel button,
-    .admin-login button {
+    .admin-panel button, .admin-login button {
       padding: 10px 15px;
       font-size: 16px;
       background-color: black;
@@ -58,6 +55,11 @@
       cursor: pointer;
       border-radius: 5px;
     }
+    .currency-switcher {
+      max-width: 200px;
+      margin: 10px auto;
+      text-align: center;
+    }
   </style>
 </head>
 <body>
@@ -73,6 +75,17 @@
   </header>
 
   <main class="container">
+
+    <!-- Выбор валюты -->
+    <div class="currency-switcher">
+      <label for="currency">Валюта:</label>
+      <select id="currency" onchange="updateCurrency(this.value)">
+        <option value="₽">₽</option>
+        <option value="₸">₸</option>
+        <option value="$">$</option>
+      </select>
+    </div>
+
     <!-- Вход -->
     <div class="admin-login">
       <h3>Вход администратора</h3>
@@ -95,6 +108,9 @@
   </main>
 
   <script>
+    let currency = localStorage.getItem("currency") || "₽";
+    document.getElementById("currency").value = currency;
+
     const productGrid = document.getElementById("productGrid");
 
     function adminAuth() {
@@ -114,12 +130,12 @@
       products.forEach((product, index) => {
         const card = document.createElement("div");
         card.className = "product";
-        card.innerHTML = `
-          <button class="delete-btn" onclick="deleteProduct(${index})">×</button>
-          <img src="${product.image}" alt="${product.name}" />
-          <h3>${product.name}</h3>
-          <p>Цена: ${product.price}₸</p>
-        `;
+        card.innerHTML = \`
+          <button class="delete-btn" onclick="deleteProduct(\${index})">×</button>
+          <img src="\${product.image}" alt="\${product.name}" />
+          <h3>\${product.name}</h3>
+          <p>Цена: \${product.price} \${currency}</p>
+        \`;
         productGrid.appendChild(card);
       });
     }
@@ -154,8 +170,13 @@
       loadProducts();
     }
 
+    function updateCurrency(newCurrency) {
+      currency = newCurrency;
+      localStorage.setItem("currency", currency);
+      loadProducts();
+    }
+
     window.onload = loadProducts;
   </script>
 </body>
 </html>
-
