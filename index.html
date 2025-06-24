@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
   <title>Family Store</title>
   <style>
     body {
@@ -15,7 +15,6 @@
       padding: 20px;
     }
     .container {
-      width: 90%;
       max-width: 960px;
       margin: auto;
       display: flex;
@@ -35,26 +34,21 @@
       padding: 20px;
       border-radius: 10px;
     }
-    .form-box input, .form-box button {
+    input, button {
       width: 100%;
       padding: 12px;
       margin-bottom: 10px;
       font-size: 16px;
     }
-    .form-box button {
+    button {
       background: black;
       color: white;
       border: none;
       border-radius: 5px;
       cursor: pointer;
     }
-    .toggle {
-      text-align: center;
-    }
-    .toggle a {
-      color: blue;
-      cursor: pointer;
-    }
+    .toggle { text-align: center; }
+    .toggle a { color: blue; cursor: pointer; }
   </style>
 </head>
 <body>
@@ -112,7 +106,10 @@
     const pass = document.getElementById("regPass").value;
     auth.createUserWithEmailAndPassword(email, pass)
       .then(() => alert("Регистрация успешна"))
-      .catch(err => alert(err.message));
+      .catch(err => {
+        console.error("Ошибка регистрации:", err);
+        alert(err.message);
+      });
   }
 
   function login() {
@@ -120,6 +117,7 @@
     const pass = document.getElementById("logPass").value;
     auth.signInWithEmailAndPassword(email, pass)
       .then(user => {
+        console.log("Успешный вход:", user.user.email);
         const isAdmin = user.user.email === "Igor@gmail.com";
         if (isAdmin) {
           window.location.href = "catalog.html?admin=true";
@@ -127,7 +125,10 @@
           window.location.href = "catalog.html";
         }
       })
-      .catch(err => alert("Ошибка входа: " + err.message));
+      .catch(err => {
+        console.error("Ошибка входа:", err);
+        alert("Ошибка входа: " + err.message);
+      });
   }
 </script>
 
