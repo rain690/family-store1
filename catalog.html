@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Каталог</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .catalog-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            padding: 20px;
+        }
+        .product {
+            background-color: white;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            position: relative;
+        }
+        .product img {
+            max-width: 100%;
+            border-radius: 8px;
+        }
+        .admin-panel {
+            background-color: rgba(255,255,255,0.9);
+            padding: 15px;
+            margin: 20px auto;
+            max-width: 500px;
+            border-radius: 10px;
+        }
+        .admin-panel input {
+            padding: 10px;
+            margin-bottom: 10px;
+            width: 100%;
+            font-size: 16px;
+        }
+        .admin-panel button {
+            padding: 10px 15px;
+            font-size: 16px;
+            background-color: black;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .delete-btn {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: red;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+<header>
+    <div class="container">
+        <h1>Каталог товаров</h1>
+        <nav>
+            <a href="index.html">Главная</a>
+            <a href="catalog.html">Каталог</a>
+            <a href="contacts.html">Контакты</a>
+        </nav>
+    </div>
+</header>
+
+<main class="container">
+    <div class="admin-panel">
+        <h3>Добавить товар</h3>
+        <input type="text" id="productName" placeholder="Название товара">
+        <input type="text" id="productPrice" placeholder="Цена">
+        <input type="file" id="productImage" accept="image/*">
+        <button onclick="addProduct()">Добавить</button>
+    </div>
+
+    <div class="catalog-grid" id="productGrid"></div>
+</main>
+
+<script>
+const productGrid = document.getElementById("productGrid");
+
+function loadProducts() {
+    const products = JSON.parse(localStorage.getItem("products") || "[]");
+    productGrid.innerHTML = "";
+    products.forEach((product, index) => {
+        const card = document.createElement("div");
+        card.className = "product";
+        card.innerHTML = \`
+            <button class="delete-btn" onclick="deleteProduct(\${index})">×</button>
+            <img src="\${product.image}" alt="\${product.name}">
+            <h3>\${product.name}</h3>
+            <p>Цена: \${product.price}₽</p>
+        \`;
+        productGrid.appendChild(card);
+    });
+}
+
+function addProduct() {
+    const name = document.getElementById("productName").value.trim();
+    const price = document.getElementById("productPrice").value.trim();
+    const file = document.getElementById("productImage").files[0];
+
+    if (!name || !price || !file) {
+        alert("Заполните все поля.");
+        return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const products = JSON.parse(localStorage.getItem("products") || "[]");
+        products.push({ name, price, image: e.target.result });
+        localStorage.setItem("products", JSON.stringify(products));
+        loadProducts();
+        document.getElementById("productName").value = "";
+        document.getElementById("productPrice").value = "";
+        document.getElementById("productImage").value = "";
+    };
+    reader.readAsDataURL(file);
+}
+
+function deleteProduct(index) {
+    const products = JSON.parse(localStorage.getItem("products") || "[]");
+    products.splice(index, 1);
+    localStorage.setItem("products", JSON.stringify(products));
+    loadProducts();
+}
+
+window.onload = loadProducts;
+</script>
+</body>
+</html>
