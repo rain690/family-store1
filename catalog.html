@@ -22,20 +22,21 @@
       max-width: 100%;
       border-radius: 8px;
     }
-    .admin-panel, .admin-login {
+    .admin-panel {
       background-color: rgba(255, 255, 255, 0.9);
       padding: 15px;
       margin: 20px auto;
       max-width: 500px;
       border-radius: 10px;
+      display: none;
     }
-    .admin-panel input, .admin-login input, select {
+    .admin-panel input, .admin-panel select {
       padding: 10px;
       margin-bottom: 10px;
       width: 100%;
       font-size: 16px;
     }
-    .admin-panel button, .admin-login button {
+    .admin-panel button {
       padding: 10px 15px;
       font-size: 16px;
       background-color: black;
@@ -55,11 +56,6 @@
       cursor: pointer;
       border-radius: 5px;
     }
-    .currency-switcher {
-      max-width: 200px;
-      margin: 10px auto;
-      text-align: center;
-    }
   </style>
 </head>
 <body>
@@ -76,53 +72,26 @@
 
   <main class="container">
 
-    <!-- Выбор валюты -->
-    <div class="currency-switcher">
-      <label for="currency">Валюта:</label>
-      <select id="currency" onchange="updateCurrency(this.value)">
+    <!-- Панель администратора (появляется только после входа через URL) -->
+    <div class="admin-panel" id="adminPanel">
+      <h3>Добавить товар</h3>
+      <input type="text" id="productName" placeholder="Название товара" />
+      <input type="text" id="productPrice" placeholder="Цена" />
+      <select id="currencySelect">
         <option value="₽">₽</option>
         <option value="₸">₸</option>
         <option value="$">$</option>
       </select>
-    </div>
-
-    <!-- Вход -->
-    <div class="admin-login">
-      <h3>Вход администратора</h3>
-      <input type="text" id="adminLogin" placeholder="Логин" />
-      <input type="password" id="adminPass" placeholder="Пароль" />
-      <button onclick="adminAuth()">Войти</button>
-    </div>
-
-    <!-- Панель администратора -->
-    <div class="admin-panel" id="adminPanel" style="display: none;">
-      <h3>Добавить товар</h3>
-      <input type="text" id="productName" placeholder="Название товара" />
-      <input type="text" id="productPrice" placeholder="Цена" />
       <input type="file" id="productImage" accept="image/*" />
       <button onclick="addProduct()">Добавить</button>
     </div>
 
-    <!-- Товары -->
+    <!-- Сетка товаров -->
     <div class="catalog-grid" id="productGrid"></div>
   </main>
 
   <script>
-    let currency = localStorage.getItem("currency") || "₽";
-    document.getElementById("currency").value = currency;
-
     const productGrid = document.getElementById("productGrid");
-
-    function adminAuth() {
-      const login = document.getElementById("adminLogin").value;
-      const pass = document.getElementById("adminPass").value;
-      if (login === "Igor@gmail.com" && pass === "Igor_6969") {
-        document.querySelector(".admin-login").style.display = "none";
-        document.getElementById("adminPanel").style.display = "block";
-      } else {
-        alert("Неверный логин или пароль.");
-      }
-    }
 
     function loadProducts() {
       const products = JSON.parse(localStorage.getItem("products") || "[]");
@@ -134,7 +103,7 @@
           <button class="delete-btn" onclick="deleteProduct(\${index})">×</button>
           <img src="\${product.image}" alt="\${product.name}" />
           <h3>\${product.name}</h3>
-          <p>Цена: \${product.price} \${currency}</p>
+          <p>Цена: \${product.price} \${product.currency}</p>
         \`;
         productGrid.appendChild(card);
       });
@@ -143,6 +112,7 @@
     function addProduct() {
       const name = document.getElementById("productName").value.trim();
       const price = document.getElementById("productPrice").value.trim();
+      const currency = document.getElementById("currencySelect").value;
       const file = document.getElementById("productImage").files[0];
 
       if (!name || !price || !file) {
@@ -153,7 +123,7 @@
       const reader = new FileReader();
       reader.onload = function (e) {
         const products = JSON.parse(localStorage.getItem("products") || "[]");
-        products.push({ name, price, image: e.target.result });
+        products.push({ name, price, currency, image: e.target.result });
         localStorage.setItem("products", JSON.stringify(products));
         loadProducts();
         document.getElementById("productName").value = "";
@@ -170,13 +140,19 @@
       loadProducts();
     }
 
-    function updateCurrency(newCurrency) {
-      currency = newCurrency;
-      localStorage.setItem("currency", currency);
-      loadProducts();
+    function checkIfAdmin() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const login = urlParams.get("login");
+      const pass = urlParams.get("pass");
+      if (login === "Igor@gmail.com" && pass === "Igor_6969") {
+        document.getElementById("adminPanel").style.display = "block";
+      }
     }
 
-    window.onload = loadProducts;
+    window.onload = function () {
+      checkIfAdmin();
+      loadProducts();
+    };
   </script>
 </body>
 </html>
