@@ -154,5 +154,25 @@
       loadProducts();
     };
   </script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"></script>
+
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyBAIuqBO0UazxM4aipuflFYtRfmqbYdonY",
+    authDomain: "family-store-af890.firebaseapp.com",
+    projectId: "family-store-af890",
+    storageBucket: "family-store-af890.firebasestorage.app",
+    messagingSenderId: "889110090209",
+    appId: "1:889110090209:web:7363d6b37d2055fa5ec2a0",
+    measurementId: "G-J3NG9JVCH4"
+  };
+
+  const app = firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+  const db = firebase.firestore();
+</script>
+
 </body>
 </html>
