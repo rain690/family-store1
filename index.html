@@ -32,25 +32,34 @@
       color: white;
       text-shadow: 1px 1px 2px black;
     }
-    .register-form {
+    .form-box {
       max-width: 400px;
       margin: 30px auto;
       background: rgba(255, 255, 255, 0.9);
       padding: 20px;
       border-radius: 10px;
     }
-    .register-form input, .register-form button {
+    .form-box input, .form-box button {
       width: 100%;
       padding: 12px;
       margin-bottom: 10px;
       font-size: 16px;
     }
-    .register-form button {
+    .form-box button {
       background-color: black;
       color: white;
       border: none;
       border-radius: 5px;
       cursor: pointer;
+    }
+    .form-toggle {
+      text-align: center;
+      margin-top: 10px;
+    }
+    .form-toggle a {
+      color: blue;
+      cursor: pointer;
+      text-decoration: underline;
     }
   </style>
 </head>
@@ -69,32 +78,78 @@
 
   <div class="content">
     <h2>Добро пожаловать в Family Store</h2>
-    <p>Зарегистрируйтесь или войдите, чтобы продолжить</p>
+    <p>Пожалуйста, зарегистрируйтесь или войдите</p>
   </div>
 
-  <div class="register-form">
-    <h3>Вход / Регистрация</h3>
-    <input type="text" id="loginInput" placeholder="Ваш логин (email)">
-    <input type="password" id="passInput" placeholder="Ваш пароль">
+  <!-- Блок формы -->
+  <div class="form-box" id="registerBox">
+    <h3>Регистрация</h3>
+    <input type="text" id="regLogin" placeholder="Email">
+    <input type="password" id="regPass" placeholder="Пароль">
+    <button onclick="registerUser()">Зарегистрироваться</button>
+    <div class="form-toggle">
+      Уже есть аккаунт? <a onclick="toggleForms()">Войти</a>
+    </div>
+  </div>
+
+  <div class="form-box" id="loginBox" style="display: none;">
+    <h3>Вход</h3>
+    <input type="text" id="loginInput" placeholder="Email">
+    <input type="password" id="passInput" placeholder="Пароль">
     <button onclick="handleLogin()">Войти</button>
+    <div class="form-toggle">
+      Нет аккаунта? <a onclick="toggleForms()">Зарегистрироваться</a>
+    </div>
   </div>
 
   <script>
+    function toggleForms() {
+      const reg = document.getElementById("registerBox");
+      const log = document.getElementById("loginBox");
+      reg.style.display = reg.style.display === "none" ? "block" : "none";
+      log.style.display = log.style.display === "none" ? "block" : "none";
+    }
+
+    function registerUser() {
+      const login = document.getElementById("regLogin").value.trim();
+      const pass = document.getElementById("regPass").value.trim();
+      if (!login || !pass) {
+        alert("Введите логин и пароль для регистрации.");
+        return;
+      }
+      let users = JSON.parse(localStorage.getItem("users") || "[]");
+      if (users.find(u => u.login === login)) {
+        alert("Такой пользователь уже зарегистрирован.");
+        return;
+      }
+      users.push({ login, pass });
+      localStorage.setItem("users", JSON.stringify(users));
+      alert("Регистрация успешна! Теперь войдите.");
+      toggleForms();
+    }
+
     function handleLogin() {
       const login = document.getElementById("loginInput").value.trim();
       const pass = document.getElementById("passInput").value.trim();
-
       if (!login || !pass) {
-        alert("Пожалуйста, введите логин и пароль.");
+        alert("Введите логин и пароль.");
         return;
       }
 
+      // Админ проверка
       if (login === "Igor@gmail.com" && pass === "Igor_6969") {
-        // Админ → переход в режим редактирования
         window.location.href = "catalog.html?login=" + encodeURIComponent(login) + "&pass=" + encodeURIComponent(pass);
+        return;
+      }
+
+      let users = JSON.parse(localStorage.getItem("users") || "[]");
+      const found = users.find(u => u.login === login && u.pass === pass);
+      if (found) {
+        alert("Вы успешно вошли как пользователь: " + login);
+        // остаётся на странице, или перенаправить на catalog.html без доступа админа
+        return;
       } else {
-        alert("Вы вошли как обычный пользователь.");
-        // Можно тут сделать переход или оставить на главной
+        alert("Неверный логин или пароль.");
       }
     }
   </script>
