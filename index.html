@@ -70,7 +70,7 @@
       <h1 style="margin: 0;">Family Store</h1>
       <nav>
         <a href="index.html">Главная</a>
-        <a href="catalog.html">Каталог</a>
+        <a href="catalog.html" id="catalogLink">Каталог</a>
         <a href="contacts.html">Контакты</a>
       </nav>
     </div>
@@ -81,7 +81,7 @@
     <p>Пожалуйста, зарегистрируйтесь или войдите</p>
   </div>
 
-  <!-- Блок формы -->
+  <!-- Форма регистрации -->
   <div class="form-box" id="registerBox">
     <h3>Регистрация</h3>
     <input type="text" id="regLogin" placeholder="Email">
@@ -92,6 +92,7 @@
     </div>
   </div>
 
+  <!-- Форма входа -->
   <div class="form-box" id="loginBox" style="display: none;">
     <h3>Вход</h3>
     <input type="text" id="loginInput" placeholder="Email">
@@ -136,8 +137,9 @@
         return;
       }
 
-      // Админ проверка
+      // Админ
       if (login === "Igor@gmail.com" && pass === "Igor_6969") {
+        localStorage.setItem("isAdmin", "true");
         window.location.href = "catalog.html?login=" + encodeURIComponent(login) + "&pass=" + encodeURIComponent(pass);
         return;
       }
@@ -145,13 +147,20 @@
       let users = JSON.parse(localStorage.getItem("users") || "[]");
       const found = users.find(u => u.login === login && u.pass === pass);
       if (found) {
-        alert("Вы успешно вошли как пользователь: " + login);
-        // остаётся на странице, или перенаправить на catalog.html без доступа админа
+        alert("Вы вошли как пользователь: " + login);
+        localStorage.setItem("isAdmin", "false");
         return;
       } else {
         alert("Неверный логин или пароль.");
       }
     }
+
+    // Подмена ссылки на каталог, если вошёл админ
+    window.addEventListener("DOMContentLoaded", function () {
+      if (localStorage.getItem("isAdmin") === "true") {
+        document.getElementById("catalogLink").href = "catalog.html?login=Igor@gmail.com&pass=Igor_6969";
+      }
+    });
   </script>
 
 </body>
