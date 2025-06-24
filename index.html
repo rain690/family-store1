@@ -3,7 +3,6 @@
 <head>
   <meta charset="UTF-8" />
   <title>Family Store</title>
-  <link rel="stylesheet" href="style.css" />
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -12,13 +11,16 @@
       background-size: cover;
     }
     header {
-      background: rgba(255, 255, 255, 0.9);
+      background: rgba(255,255,255,0.9);
       padding: 20px;
     }
     .container {
       width: 90%;
       max-width: 960px;
-      margin: 0 auto;
+      margin: auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
     nav a {
       margin: 0 15px;
@@ -26,16 +28,10 @@
       color: black;
       font-weight: bold;
     }
-    .content {
-      text-align: center;
-      padding: 50px 20px;
-      color: white;
-      text-shadow: 1px 1px 2px black;
-    }
     .form-box {
       max-width: 400px;
-      margin: 30px auto;
-      background: rgba(255, 255, 255, 0.9);
+      margin: 50px auto;
+      background: rgba(255, 255, 255, 0.95);
       padding: 20px;
       border-radius: 10px;
     }
@@ -46,140 +42,93 @@
       font-size: 16px;
     }
     .form-box button {
-      background-color: black;
+      background: black;
       color: white;
       border: none;
       border-radius: 5px;
       cursor: pointer;
     }
-    .form-toggle {
+    .toggle {
       text-align: center;
-      margin-top: 10px;
     }
-    .form-toggle a {
+    .toggle a {
       color: blue;
       cursor: pointer;
-      text-decoration: underline;
     }
   </style>
 </head>
 <body>
 
-  <header>
-    <div class="container" style="display: flex; justify-content: space-between; align-items: center;">
-      <h1 style="margin: 0;">Family Store</h1>
-      <nav>
-        <a href="index.html">Главная</a>
-        <a href="catalog.html" id="catalogLink">Каталог</a>
-        <a href="contacts.html">Контакты</a>
-      </nav>
-    </div>
-  </header>
-
-  <div class="content">
-    <h2>Добро пожаловать в Family Store</h2>
-    <p>Пожалуйста, зарегистрируйтесь или войдите</p>
+<header>
+  <div class="container">
+    <h1>Family Store</h1>
+    <nav>
+      <a href="index.html">Главная</a>
+      <a href="catalog.html">Каталог</a>
+    </nav>
   </div>
+</header>
 
-  <!-- Форма регистрации -->
-  <div class="form-box" id="registerBox">
-    <h3>Регистрация</h3>
-    <input type="text" id="regLogin" placeholder="Email">
-    <input type="password" id="regPass" placeholder="Пароль">
-    <button onclick="registerUser()">Зарегистрироваться</button>
-    <div class="form-toggle">
-      Уже есть аккаунт? <a onclick="toggleForms()">Войти</a>
-    </div>
-  </div>
+<div class="form-box" id="registerBox">
+  <h2>Регистрация</h2>
+  <input type="email" id="regEmail" placeholder="Email">
+  <input type="password" id="regPass" placeholder="Пароль">
+  <button onclick="register()">Зарегистрироваться</button>
+  <div class="toggle">Уже есть аккаунт? <a onclick="toggleForms()">Войти</a></div>
+</div>
 
-  <!-- Форма входа -->
-  <div class="form-box" id="loginBox" style="display: none;">
-    <h3>Вход</h3>
-    <input type="text" id="loginInput" placeholder="Email">
-    <input type="password" id="passInput" placeholder="Пароль">
-    <button onclick="handleLogin()">Войти</button>
-    <div class="form-toggle">
-      Нет аккаунта? <a onclick="toggleForms()">Зарегистрироваться</a>
-    </div>
-  </div>
+<div class="form-box" id="loginBox" style="display:none;">
+  <h2>Вход</h2>
+  <input type="email" id="logEmail" placeholder="Email">
+  <input type="password" id="logPass" placeholder="Пароль">
+  <button onclick="login()">Войти</button>
+  <div class="toggle">Нет аккаунта? <a onclick="toggleForms()">Регистрация</a></div>
+</div>
 
-  <script>
-    function toggleForms() {
-      const reg = document.getElementById("registerBox");
-      const log = document.getElementById("loginBox");
-      reg.style.display = reg.style.display === "none" ? "block" : "none";
-      log.style.display = log.style.display === "none" ? "block" : "none";
-    }
-
-    function registerUser() {
-      const login = document.getElementById("regLogin").value.trim();
-      const pass = document.getElementById("regPass").value.trim();
-      if (!login || !pass) {
-        alert("Введите логин и пароль для регистрации.");
-        return;
-      }
-      let users = JSON.parse(localStorage.getItem("users") || "[]");
-      if (users.find(u => u.login === login)) {
-        alert("Такой пользователь уже зарегистрирован.");
-        return;
-      }
-      users.push({ login, pass });
-      localStorage.setItem("users", JSON.stringify(users));
-      alert("Регистрация успешна! Теперь войдите.");
-      toggleForms();
-    }
-
-    function handleLogin() {
-      const login = document.getElementById("loginInput").value.trim();
-      const pass = document.getElementById("passInput").value.trim();
-      if (!login || !pass) {
-        alert("Введите логин и пароль.");
-        return;
-      }
-
-      // Админ
-      if (login === "Igor@gmail.com" && pass === "Igor_6969") {
-        localStorage.setItem("isAdmin", "true");
-        window.location.href = "catalog.html?login=" + encodeURIComponent(login) + "&pass=" + encodeURIComponent(pass);
-        return;
-      }
-
-      let users = JSON.parse(localStorage.getItem("users") || "[]");
-      const found = users.find(u => u.login === login && u.pass === pass);
-      if (found) {
-        alert("Вы вошли как пользователь: " + login);
-        localStorage.setItem("isAdmin", "false");
-        return;
-      } else {
-        alert("Неверный логин или пароль.");
-      }
-    }
-
-    // Подмена ссылки на каталог, если вошёл админ
-    window.addEventListener("DOMContentLoaded", function () {
-      if (localStorage.getItem("isAdmin") === "true") {
-        document.getElementById("catalogLink").href = "catalog.html?login=Igor@gmail.com&pass=Igor_6969";
-      }
-    });
-  </script>
+<!-- Firebase SDK -->
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"></script>
-
 <script>
   const firebaseConfig = {
     apiKey: "AIzaSyBAIuqBO0UazxM4aipuflFYtRfmqbYdonY",
     authDomain: "family-store-af890.firebaseapp.com",
     projectId: "family-store-af890",
-    storageBucket: "family-store-af890.firebasestorage.app",
+    storageBucket: "family-store-af890.appspot.com",
     messagingSenderId: "889110090209",
-    appId: "1:889110090209:web:7363d6b37d2055fa5ec2a0",
-    measurementId: "G-J3NG9JVCH4"
+    appId: "1:889110090209:web:7363d6b37d2055fa5ec2a0"
   };
-
-  const app = firebase.initializeApp(firebaseConfig);
+  firebase.initializeApp(firebaseConfig);
   const auth = firebase.auth();
-  const db = firebase.firestore();
+
+  function toggleForms() {
+    const reg = document.getElementById("registerBox");
+    const log = document.getElementById("loginBox");
+    reg.style.display = reg.style.display === "none" ? "block" : "none";
+    log.style.display = log.style.display === "none" ? "block" : "none";
+  }
+
+  function register() {
+    const email = document.getElementById("regEmail").value;
+    const pass = document.getElementById("regPass").value;
+    auth.createUserWithEmailAndPassword(email, pass)
+      .then(() => alert("Регистрация успешна"))
+      .catch(err => alert(err.message));
+  }
+
+  function login() {
+    const email = document.getElementById("logEmail").value;
+    const pass = document.getElementById("logPass").value;
+    auth.signInWithEmailAndPassword(email, pass)
+      .then(user => {
+        const isAdmin = user.user.email === "Igor@gmail.com";
+        if (isAdmin) {
+          window.location.href = "catalog.html?admin=true";
+        } else {
+          window.location.href = "catalog.html";
+        }
+      })
+      .catch(err => alert("Ошибка входа: " + err.message));
+  }
 </script>
 
 </body>
