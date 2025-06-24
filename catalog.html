@@ -3,175 +3,102 @@
 <head>
   <meta charset="UTF-8" />
   <title>Каталог</title>
-  <link rel="stylesheet" href="style.css" />
   <style>
-    .catalog-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 20px;
-      padding: 20px;
-    }
-    .product {
-      background-color: white;
-      padding: 15px;
-      border-radius: 10px;
-      text-align: center;
-      position: relative;
-    }
-    .product img {
-      max-width: 100%;
-      border-radius: 8px;
-    }
-    .admin-panel {
-      background-color: rgba(255, 255, 255, 0.9);
-      padding: 15px;
-      margin: 20px auto;
-      max-width: 500px;
-      border-radius: 10px;
-      display: none;
-    }
-    .admin-panel input, .admin-panel select {
-      padding: 10px;
-      margin-bottom: 10px;
-      width: 100%;
-      font-size: 16px;
-    }
-    .admin-panel button {
-      padding: 10px 15px;
-      font-size: 16px;
-      background-color: black;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-    .delete-btn {
-      position: absolute;
-      top: 5px;
-      right: 5px;
-      background: red;
-      color: white;
-      border: none;
-      padding: 5px 10px;
-      cursor: pointer;
-      border-radius: 5px;
-    }
+    body { font-family: Arial; margin: 0; background: #f5f5f5; }
+    header { background: white; padding: 20px; }
+    .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; padding: 20px; }
+    .card { background: white; padding: 10px; border-radius: 10px; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+    .card img { width: 100%; height: auto; border-radius: 8px; }
+    .admin-panel { max-width: 400px; margin: 20px auto; background: #fff; padding: 20px; border-radius: 10px; }
+    input, select, button { width: 100%; margin-bottom: 10px; padding: 10px; font-size: 16px; }
+    .del-btn { background: red; color: white; padding: 5px 10px; border: none; cursor: pointer; border-radius: 5px; }
   </style>
 </head>
 <body>
-  <header>
-    <div class="container">
-      <h1>Каталог товаров</h1>
-      <nav>
-        <a href="index.html">Главная</a>
-        <a href="catalog.html">Каталог</a>
-        <a href="contacts.html">Контакты</a>
-      </nav>
-    </div>
-  </header>
 
-  <main class="container">
+<header>
+  <h1 style="text-align:center;">Каталог товаров</h1>
+</header>
 
-    <!-- Панель администратора -->
-    <div class="admin-panel" id="adminPanel">
-      <h3>Добавить товар</h3>
-      <input type="text" id="productName" placeholder="Название товара" />
-      <input type="text" id="productPrice" placeholder="Цена" />
-      <select id="currencySelect">
-        <option value="₽">₽</option>
-        <option value="₸">₸</option>
-        <option value="$">$</option>
-      </select>
-      <input type="file" id="productImage" accept="image/*" />
-      <button onclick="addProduct()">Добавить</button>
-    </div>
+<div class="admin-panel" id="adminPanel" style="display:none;">
+  <h3>Добавить товар</h3>
+  <input type="text" id="name" placeholder="Название">
+  <input type="text" id="price" placeholder="Цена">
+  <select id="currency">
+    <option value="₽">₽</option>
+    <option value="₸">₸</option>
+    <option value="$">$</option>
+  </select>
+  <input type="file" id="image">
+  <button onclick="addProduct()">Добавить</button>
+</div>
 
-    <!-- Товары -->
-    <div class="catalog-grid" id="productGrid"></div>
-  </main>
+<div class="grid" id="grid"></div>
 
-  <script>
-    const productGrid = document.getElementById("productGrid");
-
-    function loadProducts() {
-      const products = JSON.parse(localStorage.getItem("products") || "[]");
-      productGrid.innerHTML = "";
-      products.forEach((product, index) => {
-        const card = document.createElement("div");
-        card.className = "product";
-        card.innerHTML = \`
-          <button class="delete-btn" onclick="deleteProduct(\${index})">×</button>
-          <img src="\${product.image}" alt="\${product.name}" />
-          <h3>\${product.name}</h3>
-          <p>Цена: \${product.price} \${product.currency}</p>
-        \`;
-        productGrid.appendChild(card);
-      });
-    }
-
-    function addProduct() {
-      const name = document.getElementById("productName").value.trim();
-      const price = document.getElementById("productPrice").value.trim();
-      const currency = document.getElementById("currencySelect").value;
-      const file = document.getElementById("productImage").files[0];
-
-      if (!name || !price || !file) {
-        alert("Заполните все поля.");
-        return;
-      }
-
-      const reader = new FileReader();
-      reader.onload = function (e) {
-        const products = JSON.parse(localStorage.getItem("products") || "[]");
-        products.push({ name, price, currency, image: e.target.result });
-        localStorage.setItem("products", JSON.stringify(products));
-        loadProducts();
-        document.getElementById("productName").value = "";
-        document.getElementById("productPrice").value = "";
-        document.getElementById("productImage").value = "";
-      };
-      reader.readAsDataURL(file);
-    }
-
-    function deleteProduct(index) {
-      const products = JSON.parse(localStorage.getItem("products") || "[]");
-      products.splice(index, 1);
-      localStorage.setItem("products", JSON.stringify(products));
-      loadProducts();
-    }
-
-    function checkIfAdmin() {
-      const urlParams = new URLSearchParams(window.location.search);
-      const login = urlParams.get("login");
-      const pass = urlParams.get("pass");
-      if (login === "Igor@gmail.com" && pass === "Igor_6969") {
-        document.getElementById("adminPanel").style.display = "block";
-      }
-    }
-
-    window.onload = function () {
-      checkIfAdmin();
-      loadProducts();
-    };
-  </script>
+<!-- Firebase SDK -->
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"></script>
-
 <script>
   const firebaseConfig = {
     apiKey: "AIzaSyBAIuqBO0UazxM4aipuflFYtRfmqbYdonY",
     authDomain: "family-store-af890.firebaseapp.com",
     projectId: "family-store-af890",
-    storageBucket: "family-store-af890.firebasestorage.app",
+    storageBucket: "family-store-af890.appspot.com",
     messagingSenderId: "889110090209",
-    appId: "1:889110090209:web:7363d6b37d2055fa5ec2a0",
-    measurementId: "G-J3NG9JVCH4"
+    appId: "1:889110090209:web:7363d6b37d2055fa5ec2a0"
   };
-
-  const app = firebase.initializeApp(firebaseConfig);
-  const auth = firebase.auth();
+  firebase.initializeApp(firebaseConfig);
   const db = firebase.firestore();
+  const auth = firebase.auth();
+
+  const grid = document.getElementById("grid");
+
+  function renderProduct(doc, isAdmin) {
+    const card = document.createElement("div");
+    card.className = "card";
+    card.innerHTML = `
+      <img src="${doc.data().image}">
+      <h4>${doc.data().name}</h4>
+      <p>${doc.data().price} ${doc.data().currency}</p>
+      ${isAdmin ? `<button class="del-btn" onclick="deleteProduct('${doc.id}')">Удалить</button>` : ''}
+    `;
+    grid.appendChild(card);
+  }
+
+  function loadProducts(isAdmin) {
+    db.collection("products").onSnapshot(snapshot => {
+      grid.innerHTML = "";
+      snapshot.forEach(doc => renderProduct(doc, isAdmin));
+    });
+  }
+
+  function addProduct() {
+    const name = document.getElementById("name").value;
+    const price = document.getElementById("price").value;
+    const currency = document.getElementById("currency").value;
+    const file = document.getElementById("image").files[0];
+    if (!name || !price || !file) return alert("Заполните все поля");
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      db.collection("products").add({
+        name, price, currency,
+        image: e.target.result
+      });
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function deleteProduct(id) {
+    db.collection("products").doc(id).delete();
+  }
+
+  auth.onAuthStateChanged(user => {
+    const isAdmin = user && user.email === "Igor@gmail.com";
+    if (isAdmin) document.getElementById("adminPanel").style.display = "block";
+    loadProducts(isAdmin);
+  });
 </script>
 
 </body>
