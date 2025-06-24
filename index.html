@@ -1,26 +1,114 @@
-
 <!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Family Store</title>
+    <title>Family Store — Admin</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+        .admin-form, .admin-panel {
+            max-width: 400px;
+            margin: 40px auto;
+            background: rgba(255,255,255,0.9);
+            padding: 20px;
+            border-radius: 10px;
+        }
+        input, button {
+            display: block;
+            width: 100%;
+            margin: 10px 0;
+            padding: 10px;
+            font-size: 16px;
+        }
+        #adminPanel {
+            display: none;
+        }
+        .product {
+            background: white;
+            padding: 15px;
+            margin-top: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .product img {
+            width: 100%;
+            border-radius: 6px;
+        }
+    </style>
 </head>
 <body>
-<header>
-    <div class="container" style="display: flex; align-items: center; justify-content: flex-start; gap: 30px;">
-        <h1 style="margin: 0;">Family Store</h1>
-        <nav>
-            <a href="index.html">Главная</a>
-            <a href="catalog.html">Каталог</a>
-            <a href="contacts.html">Контакты</a>
-        </nav>
-    </div>
-</header>
-<main class="container" style="text-align: center;">
-    <h2 style="color: white; font-size: 36px; text-shadow: 1px 1px 2px black;">Добро пожаловать в Family Store</h2>
-    <p style="color: white; font-size: 24px; text-shadow: 1px 1px 2px black;">Ваш интернет-магазин одежды.</p>
-    <a href="catalog.html" style="display: inline-block; margin-top: 30px; padding: 15px 30px; background-color: white; color: black; font-size: 18px; border-radius: 8px; text-decoration: none;">Перейти в каталог</a>
-</main>
+    <header>
+        <div class="container" style="display: flex; align-items: center; justify-content: flex-start; gap: 30px;">
+            <h1 style="margin: 0;">Family Store</h1>
+            <nav>
+                <a href="index.html">Главная</a>
+                <a href="catalog.html">Каталог</a>
+                <a href="contacts.html">Контакты</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container" style="text-align: center;">
+        <h2 style="color: white; font-size: 36px; text-shadow: 1px 1px 2px black;">Добро пожаловать</h2>
+        <p style="color: white; font-size: 24px;">Вход только для администратора</p>
+
+        <!-- Форма входа -->
+        <div class="admin-form">
+            <input type="text" id="login" placeholder="Логин">
+            <input type="password" id="password" placeholder="Пароль">
+            <button onclick="checkAdmin()">Войти</button>
+        </div>
+
+        <!-- Панель администратора -->
+        <div id="adminPanel" class="admin-panel">
+            <h3>Панель администратора</h3>
+            <input type="text" id="productName" placeholder="Название товара">
+            <input type="text" id="productPrice" placeholder="Цена товара">
+            <input type="file" id="productImage" accept="image/*">
+            <button onclick="addProduct()">Добавить товар</button>
+            <div id="productList"></div>
+        </div>
+    </main>
+
+    <script>
+        function checkAdmin() {
+            const login = document.getElementById("login").value.trim();
+            const password = document.getElementById("password").value.trim();
+            if (login === "Igor@gmail.com" && password === "Igor_6969") {
+                document.querySelector(".admin-form").style.display = "none";
+                document.getElementById("adminPanel").style.display = "block";
+            } else {
+                alert("Неверный логин или пароль!");
+            }
+        }
+
+        function addProduct() {
+            const name = document.getElementById("productName").value.trim();
+            const price = document.getElementById("productPrice").value.trim();
+            const file = document.getElementById("productImage").files[0];
+
+            if (!name || !price || !file) {
+                alert("Пожалуйста, заполните все поля.");
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const card = document.createElement("div");
+                card.className = "product";
+                card.innerHTML = `
+                    <img src="${e.target.result}" alt="${name}">
+                    <h3>${name}</h3>
+                    <p>Цена: ${price}₽</p>
+                `;
+                document.getElementById("productList").appendChild(card);
+
+                document.getElementById("productName").value = "";
+                document.getElementById("productPrice").value = "";
+                document.getElementById("productImage").value = "";
+            };
+            reader.readAsDataURL(file);
+        }
+    </script>
 </body>
 </html>
+
