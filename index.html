@@ -1,0 +1,66 @@
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>Family Store</title>
+  <style>
+    body { font-family: Arial; background: url('background.jpg') no-repeat center center fixed; background-size: cover; margin: 0; }
+    header { background: rgba(255,255,255,0.9); padding: 10px; display: flex; justify-content: space-between; align-items: center; }
+    nav a { margin: 0 10px; text-decoration: none; color: black; font-weight: bold; }
+    .auth-box { max-width: 400px; margin: 50px auto; background: white; padding: 20px; border-radius: 8px; }
+    input, button { width: 100%; margin-bottom: 10px; padding: 10px; }
+  </style>
+</head>
+<body>
+<header>
+  <div><strong>Family Store</strong></div>
+  <nav>
+    <a href="index.html">Главная</a>
+    <a href="catalog.html">Каталог</a>
+    <a href="cart.html">Корзина</a>
+  </nav>
+</header>
+
+<div class="auth-box">
+  <h2>Вход / Регистрация</h2>
+  <input type="email" id="email" placeholder="Email" autocomplete="email">
+  <input type="password" id="password" placeholder="Пароль" autocomplete="current-password">
+  <button onclick="login()">Войти</button>
+  <button onclick="register()">Зарегистрироваться</button>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyBAIuqBO0UazxM4aipuflFYtRfmqbYdonY",
+  authDomain: "family-store-af890.firebaseapp.com",
+  projectId: "family-store-af890",
+  storageBucket: "family-store-af890.appspot.com",
+  messagingSenderId: "889110090209",
+  appId: "1:889110090209:web:7363d6b37d2055fa5ec2a0"
+};
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+
+function login() {
+  const email = document.getElementById("email").value;
+  const pass = document.getElementById("password").value;
+  auth.signInWithEmailAndPassword(email, pass)
+    .then(u => {
+      alert("Вход успешно совершен");
+      window.location.href = "catalog.html";
+    })
+    .catch(e => alert("Ошибка входа: " + e.message));
+}
+function register() {
+  const email = document.getElementById("email").value;
+  const pass = document.getElementById("password").value;
+  auth.createUserWithEmailAndPassword(email, pass)
+    .then(() => alert("Регистрация успешно завершена"))
+    .catch(e => alert("Ошибка: " + e.message));
+}
+</script>
+</body>
+</html>
